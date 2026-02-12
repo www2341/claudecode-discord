@@ -68,6 +68,10 @@ claude
 # After login, CLI is ready to use
 ```
 
+> **⚠️ Important: You MUST run `claude` in the terminal and log in before starting the bot.**
+> The bot cannot create Claude Code sessions if you haven't logged in first.
+> To verify: run `claude` — if it starts a conversation immediately, you're logged in.
+
 > Claude Code uses **OAuth authentication**, not an API key.
 > No `ANTHROPIC_API_KEY` environment variable is needed.
 > (Max plan users: use as-is. API key users: set `ANTHROPIC_API_KEY` env var)
@@ -258,8 +262,17 @@ In Discord, go to the desired channel:
 ```
 /register path:my-project-folder
 ```
-- Folder names are resolved under `BASE_PROJECT_DIR`
-- Absolute paths also work: `/register path:/Users/you/other/project`
+
+**How path resolution works:**
+
+| Input type | Example input | Resolved path (`BASE_PROJECT_DIR=/Users/you/projects`) |
+|---|---|---|
+| Folder name only | `my-app` | `/Users/you/projects/my-app` |
+| Relative path | `work/my-app` | `/Users/you/projects/work/my-app` |
+| Absolute path | `/Users/you/other/project` | `/Users/you/other/project` (used as-is) |
+
+> **Tip:** Run `pwd` in your terminal inside the project directory to get the absolute path.
+> When using an absolute path, `BASE_PROJECT_DIR` is ignored and the path is used directly.
 
 ### Send Messages to Claude
 

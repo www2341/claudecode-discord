@@ -66,6 +66,10 @@ claude
 # 로그인 완료 후 터미널에서 사용 가능
 ```
 
+> **⚠️ 중요: 봇을 실행하기 전에 반드시 터미널에서 `claude` 명령어를 한 번 실행하여 로그인하세요.**
+> 로그인하지 않은 상태에서 봇을 실행하면 Claude Code 세션이 생성되지 않습니다.
+> 로그인 상태 확인: `claude` 실행 시 바로 대화가 시작되면 로그인된 상태입니다.
+
 > Claude Code는 Anthropic API 키가 아닌 **OAuth 인증**으로 동작합니다.
 > 별도의 `ANTHROPIC_API_KEY` 환경변수는 필요 없습니다.
 > (Max 플랜 사용자는 그대로, API 키 사용자는 `ANTHROPIC_API_KEY` 환경변수 설정 필요)
@@ -256,8 +260,17 @@ Discord에서 원하는 채널로 이동 후:
 ```
 /register path:my-project-folder
 ```
-- 폴더 이름만 입력하면 `BASE_PROJECT_DIR` 하위에서 찾음
-- 절대 경로도 가능: `/register path:/Users/you/other/project`
+
+**경로 입력 방법:**
+
+| 입력 방식 | 입력 예시 | 실제 경로 (`BASE_PROJECT_DIR=/Users/you/projects` 기준) |
+|---|---|---|
+| 폴더 이름만 | `my-app` | `/Users/you/projects/my-app` |
+| 하위 경로 | `work/my-app` | `/Users/you/projects/work/my-app` |
+| 절대 경로 | `/Users/you/other/project` | `/Users/you/other/project` (그대로 사용) |
+
+> **팁:** 터미널에서 프로젝트 디렉토리로 이동 후 `pwd` 명령어를 실행하면 절대 경로를 확인할 수 있습니다.
+> 절대 경로를 입력하면 `BASE_PROJECT_DIR` 설정과 관계없이 해당 경로가 그대로 사용됩니다.
 
 ### Claude에게 메시지 보내기
 

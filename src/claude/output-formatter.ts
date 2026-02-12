@@ -108,13 +108,15 @@ export function createToolApprovalEmbed(
       embed.addFields({ name: "Description", value: description, inline: false });
     }
   } else {
-    // Generic tool display
-    const summary = JSON.stringify(input, null, 2).slice(0, 800);
-    embed.addFields({
-      name: "Input",
-      value: `\`\`\`json\n${summary}\n\`\`\``,
-      inline: false,
-    });
+    // Generic tool display - skip empty input
+    const summary = JSON.stringify(input, null, 2);
+    if (summary && summary !== "{}") {
+      embed.addFields({
+        name: "Input",
+        value: `\`\`\`json\n${summary.slice(0, 800)}\n\`\`\``,
+        inline: false,
+      });
+    }
   }
 
   const row = new ActionRowBuilder<ButtonBuilder>().addComponents(

@@ -16,61 +16,11 @@ set "TASK_NAME=ClaudeDiscordBot"
 set "TRAY_EXE=%SCRIPT_DIR%\tray\ClaudeBotTray.exe"
 set "TRAY_SRC=%SCRIPT_DIR%\tray\ClaudeBotTray.cs"
 
-:: .env 파일 없으면 초기 설정
-if not exist "%ENV_FILE%" (
-    echo ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    echo   Claude Discord Bot - 초기 설정
-    echo ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    echo.
-
-    set /p "BOT_TOKEN=Discord Bot Token: "
-    if "!BOT_TOKEN!"=="" (
-        echo ❌ Bot Token은 필수입니다
-        exit /b 1
-    )
-
-    set /p "GUILD_ID=Discord Guild(서버) ID: "
-    if "!GUILD_ID!"=="" (
-        echo ❌ Guild ID는 필수입니다
-        exit /b 1
-    )
-
-    set /p "USER_IDS=허용할 Discord User ID (여러 명이면 쉼표 구분): "
-    if "!USER_IDS!"=="" (
-        echo ❌ User ID는 필수입니다
-        exit /b 1
-    )
-
-    set /p "PROJECT_DIR=프로젝트 기본 디렉토리 [%CD%]: "
-    if "!PROJECT_DIR!"=="" set "PROJECT_DIR=%CD%"
-
-    set /p "RATE_LIMIT=분당 요청 제한 [10]: "
-    if "!RATE_LIMIT!"=="" set "RATE_LIMIT=10"
-
-    echo.
-    echo Max 플랜 사용자는 비용이 표시되지 않으므로 false 권장
-    set /p "SHOW_COST=비용 표시 (true/false) [true]: "
-    if "!SHOW_COST!"=="" set "SHOW_COST=true"
-
-    (
-        echo DISCORD_BOT_TOKEN=!BOT_TOKEN!
-        echo DISCORD_GUILD_ID=!GUILD_ID!
-        echo ALLOWED_USER_IDS=!USER_IDS!
-        echo BASE_PROJECT_DIR=!PROJECT_DIR!
-        echo RATE_LIMIT_PER_MINUTE=!RATE_LIMIT!
-        echo SHOW_COST=!SHOW_COST!
-    ) > "%ENV_FILE%"
-
-    echo.
-    echo ✅ .env 파일이 생성되었습니다
-    echo ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    echo.
-)
-
 :: node 경로 확인
 where node >nul 2>&1
 if errorlevel 1 (
-    echo ❌ Node.js를 찾을 수 없습니다
+    echo Node.js not found. Please run install.bat first.
+    pause
     exit /b 1
 )
 
@@ -174,12 +124,6 @@ if not exist "dist" (
     call npm run build
 )
 
-:: 작업 스케줄러 등록 (부팅 시 자동 실행)
-schtasks /create /tn "%TASK_NAME%" /tr "\"%SCRIPT_DIR%\win-start.bat\" --fg" /sc onlogon /rl highest /f >nul 2>&1
-
-:: 봇 백그라운드 실행
-start "ClaudeDiscordBot" /min cmd /c "cd /d %SCRIPT_DIR% && node dist/index.js"
-
 :: 트레이 앱 컴파일 (exe 없으면)
 if not exist "%TRAY_EXE%" (
     if exist "%TRAY_SRC%" (
@@ -200,10 +144,18 @@ if not exist "%TRAY_EXE%" (
 if exist "%TRAY_EXE%" (
     taskkill /im ClaudeBotTray.exe /f >nul 2>&1
     start "" "%TRAY_EXE%"
-    echo 🟢 봇이 백그라운드에서 시작되었습니다 ^(트레이 표시^)
-) else (
-    echo 🟢 봇이 백그라운드에서 시작되었습니다
 )
-echo    중지: win-start.bat --stop
-echo    상태: win-start.bat --status
-echo    로그: type bot.log
+
+:: .env 있으면 봇 시작, 없으면 트레이에서 설정하도록
+if exist "%ENV_FILE%" (
+    :: 작업 스케줄러 등록
+    schtasks /create /tn "%TASK_NAME%" /tr "\"%SCRIPT_DIR%\win-start.bat\" --fg" /sc onlogon /rl highest /f >nul 2>&1
+    :: 봇 백그라운드 실행
+    start "ClaudeDiscordBot" /min cmd /c "cd /d %SCRIPT_DIR% && node dist/index.js"
+    echo 🟢 Bot started in background
+) else (
+    echo ⚙️ .env not found. Please configure settings from the tray icon.
+)
+echo    Stop: win-start.bat --stop
+echo    Status: win-start.bat --status
+echo    Log: type bot.log

@@ -11,57 +11,6 @@ ENV_FILE="$SCRIPT_DIR/.env"
 SERVICE_NAME="claude-discord"
 SERVICE_FILE="$HOME/.config/systemd/user/$SERVICE_NAME.service"
 
-# .env 파일 없으면 초기 설정
-if [ ! -f "$ENV_FILE" ]; then
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "  Claude Discord Bot - 초기 설정"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo ""
-
-    read -p "Discord Bot Token: " BOT_TOKEN
-    if [ -z "$BOT_TOKEN" ]; then
-        echo "❌ Bot Token은 필수입니다"
-        exit 1
-    fi
-
-    read -p "Discord Guild(서버) ID: " GUILD_ID
-    if [ -z "$GUILD_ID" ]; then
-        echo "❌ Guild ID는 필수입니다"
-        exit 1
-    fi
-
-    read -p "허용할 Discord User ID (여러 명이면 쉼표 구분): " USER_IDS
-    if [ -z "$USER_IDS" ]; then
-        echo "❌ User ID는 필수입니다"
-        exit 1
-    fi
-
-    read -p "프로젝트 기본 디렉토리 [$(pwd)]: " PROJECT_DIR
-    PROJECT_DIR="${PROJECT_DIR:-$(pwd)}"
-
-    read -p "분당 요청 제한 [10]: " RATE_LIMIT
-    RATE_LIMIT="${RATE_LIMIT:-10}"
-
-    echo ""
-    echo "Max 플랜 사용자는 비용이 표시되지 않으므로 false 권장"
-    read -p "비용 표시 (true/false) [true]: " SHOW_COST
-    SHOW_COST="${SHOW_COST:-true}"
-
-    cat > "$ENV_FILE" << EOF
-DISCORD_BOT_TOKEN=$BOT_TOKEN
-DISCORD_GUILD_ID=$GUILD_ID
-ALLOWED_USER_IDS=$USER_IDS
-BASE_PROJECT_DIR=$PROJECT_DIR
-RATE_LIMIT_PER_MINUTE=$RATE_LIMIT
-SHOW_COST=$SHOW_COST
-EOF
-
-    echo ""
-    echo "✅ .env 파일이 생성되었습니다"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo ""
-fi
-
 # node 경로 찾기
 find_node() {
     # nvm
@@ -167,12 +116,9 @@ StandardError=append:$SCRIPT_DIR/bot-error.log
 WantedBy=default.target
 EOF
 
-# 서비스 등록 & 시작
 systemctl --user daemon-reload
-systemctl --user enable "$SERVICE_NAME" 2>/dev/null
-systemctl --user start "$SERVICE_NAME"
 
-# 트레이 앱 실행 (GUI 환경일 때만)
+# 트레이 앱 먼저 실행 (설정이 없으면 트레이에서 설정하도록)
 TRAY_SCRIPT="$SCRIPT_DIR/tray/claude_tray.py"
 if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
     if [ -f "$TRAY_SCRIPT" ] && command -v python3 &>/dev/null; then
@@ -197,16 +143,17 @@ if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
         if python3 -c "import pystray; from PIL import Image" 2>/dev/null; then
             pkill -f "claude_tray.py" 2>/dev/null
             nohup python3 "$TRAY_SCRIPT" > /dev/null 2>&1 &
-            echo "🟢 봇이 백그라운드에서 시작되었습니다 (트레이 표시)"
-        else
-            echo "🟢 봇이 백그라운드에서 시작되었습니다"
-            echo "   (트레이: pip3 install pystray Pillow 후 재시작)"
         fi
-    else
-        echo "🟢 봇이 백그라운드에서 시작되었습니다"
     fi
+fi
+
+# .env 있으면 봇 시작, 없으면 트레이에서 설정하도록
+if [ -f "$ENV_FILE" ]; then
+    systemctl --user enable "$SERVICE_NAME" 2>/dev/null
+    systemctl --user start "$SERVICE_NAME"
+    echo "🟢 봇이 백그라운드에서 시작되었습니다"
 else
-    echo "🟢 봇이 백그라운드에서 시작되었습니다 (서버 모드)"
+    echo "⚙️ .env not found. Please configure settings from the tray icon."
 fi
 echo "   중지: ./linux-start.sh --stop"
 echo "   상태: ./linux-start.sh --status"

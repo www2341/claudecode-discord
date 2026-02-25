@@ -9,57 +9,6 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ENV_FILE="$SCRIPT_DIR/.env"
 
-# .env 파일 없으면 초기 설정
-if [ ! -f "$ENV_FILE" ]; then
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "  Claude Discord Bot - 초기 설정"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo ""
-
-    read -p "Discord Bot Token: " BOT_TOKEN
-    if [ -z "$BOT_TOKEN" ]; then
-        echo "❌ Bot Token은 필수입니다"
-        exit 1
-    fi
-
-    read -p "Discord Guild(서버) ID: " GUILD_ID
-    if [ -z "$GUILD_ID" ]; then
-        echo "❌ Guild ID는 필수입니다"
-        exit 1
-    fi
-
-    read -p "허용할 Discord User ID (여러 명이면 쉼표 구분): " USER_IDS
-    if [ -z "$USER_IDS" ]; then
-        echo "❌ User ID는 필수입니다"
-        exit 1
-    fi
-
-    read -p "프로젝트 기본 디렉토리 [$(pwd)]: " PROJECT_DIR
-    PROJECT_DIR="${PROJECT_DIR:-$(pwd)}"
-
-    read -p "분당 요청 제한 [10]: " RATE_LIMIT
-    RATE_LIMIT="${RATE_LIMIT:-10}"
-
-    echo ""
-    echo "Max 플랜 사용자는 비용이 표시되지 않으므로 false 권장"
-    read -p "비용 표시 (true/false) [true]: " SHOW_COST
-    SHOW_COST="${SHOW_COST:-true}"
-
-    cat > "$ENV_FILE" << EOF
-DISCORD_BOT_TOKEN=$BOT_TOKEN
-DISCORD_GUILD_ID=$GUILD_ID
-ALLOWED_USER_IDS=$USER_IDS
-BASE_PROJECT_DIR=$PROJECT_DIR
-RATE_LIMIT_PER_MINUTE=$RATE_LIMIT
-SHOW_COST=$SHOW_COST
-EOF
-
-    echo ""
-    echo "✅ .env 파일이 생성되었습니다"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo ""
-fi
-
 PLIST_NAME="com.claude-discord.plist"
 PLIST_SRC="$SCRIPT_DIR/$PLIST_NAME"
 PLIST_DST="$HOME/Library/LaunchAgents/$PLIST_NAME"
@@ -137,17 +86,23 @@ if [ ! -f "$MENUBAR" ] && [ -f "$SCRIPT_DIR/menubar/ClaudeBotMenu.swift" ]; then
     swiftc -o "$MENUBAR" "$SCRIPT_DIR/menubar/ClaudeBotMenu.swift" -framework Cocoa 2>/dev/null
 fi
 
-# plist 복사 & 등록
-cp "$PLIST_SRC" "$PLIST_DST"
-launchctl load "$PLIST_DST"
-
-# 메뉴바 앱 실행
+# 메뉴바 앱 먼저 실행 (설정이 없으면 트레이에서 설정하도록)
 if [ -f "$MENUBAR" ]; then
     pkill -f "ClaudeBotMenu" 2>/dev/null
     nohup "$MENUBAR" > /dev/null 2>&1 &
-    echo "🟢 봇이 백그라운드에서 시작되었습니다 (메뉴바 표시)"
+fi
+
+# .env 있으면 봇 시작, 없으면 트레이에서 설정하도록
+if [ -f "$ENV_FILE" ]; then
+    cp "$PLIST_SRC" "$PLIST_DST"
+    launchctl load "$PLIST_DST"
+    if [ -f "$MENUBAR" ]; then
+        echo "🟢 봇이 백그라운드에서 시작되었습니다 (메뉴바 표시)"
+    else
+        echo "🟢 봇이 백그라운드에서 시작되었습니다"
+    fi
 else
-    echo "🟢 봇이 백그라운드에서 시작되었습니다"
+    echo "⚙️ .env not found. Please configure settings from the menu bar icon."
 fi
 echo "   중지: ./mac-start.sh --stop"
 echo "   상태: ./mac-start.sh --status"

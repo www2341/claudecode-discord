@@ -401,6 +401,13 @@ def main():
         menu=create_menu(),
     )
 
+    # .env 없으면 자동으로 설정 창 열기
+    if not os.path.exists(ENV_PATH):
+        def auto_open_settings():
+            time.sleep(1)
+            edit_settings(icon, None)
+        threading.Thread(target=auto_open_settings, daemon=True).start()
+
     refresh_thread = threading.Thread(target=refresh_loop, args=(icon,), daemon=True)
     refresh_thread.start()
 

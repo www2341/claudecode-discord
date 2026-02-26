@@ -1067,6 +1067,16 @@ class ClaudeBotTray : Form
     [STAThread]
     static void Main()
     {
+        // Kill any other ClaudeBotTray instances (handles leftover duplicates from updates)
+        int myPid = Process.GetCurrentProcess().Id;
+        foreach (var proc in Process.GetProcessesByName("ClaudeBotTray"))
+        {
+            if (proc.Id != myPid)
+            {
+                try { proc.Kill(); } catch { }
+            }
+        }
+
         // Single instance check using named Mutex
         bool createdNew;
         using (var mutex = new Mutex(true, "ClaudeBotTray_SingleInstance", out createdNew))

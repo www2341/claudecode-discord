@@ -2,7 +2,7 @@
 
 Complete guide for installing and running the Claude Code Discord Bot on Windows.
 
-> **[Korean version (한국어)](SETUP-WINDOWS.kr.md)** | **[macOS / Linux Setup](SETUP.md)**
+> **[Korean version (한국어)](SETUP-WINDOWS.kr.md)** | **[macOS / Linux Setup](../SETUP.md)**
 
 ---
 
@@ -79,7 +79,7 @@ git config --global user.email "your@email.com"
 > **Session sharing note:** If you use VSCode natively on Windows (most users), you must run the bot on **Windows Native** as well.
 > Running the bot in WSL gives project paths like `/home/...`, which won't match VSCode's `C:\Users\...` paths — so Claude Code sessions from VSCode cannot be resumed from Discord.
 
-> For WSL usage, follow the **[macOS / Linux Setup Guide](SETUP.md)** instead.
+> For WSL usage, follow the **[macOS / Linux Setup Guide](../SETUP.md)** instead.
 
 ---
 
@@ -144,13 +144,13 @@ npm run build
    - **SCOPES**: Check `bot`, `applications.commands`
 
    <p align="center">
-     <img src="docs/discord-scopes.png" alt="Discord OAuth2 Scopes" width="500">
+     <img src="discord-scopes.png" alt="Discord OAuth2 Scopes" width="500">
    </p>
 
    - **BOT PERMISSIONS**: Check `Send Messages`, `Embed Links`, `Read Message History`, `Use Slash Commands`
 
    <p align="center">
-     <img src="docs/discord-bot-permissions.png" alt="Discord Bot Permissions" width="500">
+     <img src="discord-bot-permissions.png" alt="Discord Bot Permissions" width="500">
    </p>
 
 3. Copy the generated URL and paste in your browser
@@ -181,7 +181,7 @@ npm run build
 Run `win-start.bat` or double-click the **desktop shortcut**. The tray app launches and opens the **Settings** dialog automatically if `.env` is not configured.
 
 <p align="center">
-  <img src="docs/windows-settings.png" alt="Windows Settings Dialog" width="450">
+  <img src="windows-settings.png" alt="Windows Settings Dialog" width="450">
 </p>
 
 Fill in the fields:

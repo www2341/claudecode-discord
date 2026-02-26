@@ -2,7 +2,7 @@
 
 macOS와 Linux에서 Claude Code Discord Bot을 설치하고 실행하는 전체 과정입니다.
 
-> **[English version](SETUP.md)** | **[Windows 셋업](SETUP-WINDOWS.kr.md)**
+> **[English version](../SETUP.md)** | **[Windows 셋업](SETUP-WINDOWS.kr.md)**
 
 ---
 
@@ -117,13 +117,13 @@ npm run build   # 타입 에러 없이 빌드되는지 확인
    - **SCOPES**: `bot`, `applications.commands` 체크
 
    <p align="center">
-     <img src="docs/discord-scopes.png" alt="Discord OAuth2 Scopes" width="500">
+     <img src="discord-scopes.png" alt="Discord OAuth2 Scopes" width="500">
    </p>
 
    - **BOT PERMISSIONS**: `Send Messages`, `Embed Links`, `Read Message History`, `Use Slash Commands` 체크
 
    <p align="center">
-     <img src="docs/discord-bot-permissions.png" alt="Discord Bot Permissions" width="500">
+     <img src="discord-bot-permissions.png" alt="Discord Bot Permissions" width="500">
    </p>
 
 3. 생성된 URL을 복사하여 브라우저에 붙여넣기

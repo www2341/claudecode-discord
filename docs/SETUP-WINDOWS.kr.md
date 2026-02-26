@@ -2,7 +2,7 @@
 
 Windows에서 Claude Code Discord Bot을 설치하고 실행하는 전체 과정입니다.
 
-> **[English version](SETUP-WINDOWS.md)** | **[macOS / Linux 셋업](SETUP.kr.md)**
+> **[English version](SETUP-WINDOWS.md)** | **[macOS / Linux 셋업](../SETUP.md)**
 
 ---
 
@@ -79,7 +79,7 @@ git config --global user.email "your@email.com"
 > **세션 공유 주의:** VSCode를 Windows 네이티브로 사용하는 경우(대부분의 경우), 봇도 **Windows 네이티브**로 실행해야 합니다.
 > WSL에서 봇을 실행하면 프로젝트 경로가 `/home/...`이 되어 VSCode의 `C:\Users\...` 경로와 달라지므로, VSCode에서 만든 Claude Code 세션을 Discord에서 이어갈 수 없습니다.
 
-> WSL을 사용하는 경우 **[macOS / Linux 셋업 가이드](SETUP.kr.md)**를 참고하세요.
+> WSL을 사용하는 경우 **[macOS / Linux 셋업 가이드](../SETUP.md)**를 참고하세요.
 
 ---
 
@@ -144,13 +144,13 @@ npm run build
    - **SCOPES**: `bot`, `applications.commands` 체크
 
    <p align="center">
-     <img src="docs/discord-scopes.png" alt="Discord OAuth2 Scopes" width="500">
+     <img src="discord-scopes.png" alt="Discord OAuth2 Scopes" width="500">
    </p>
 
    - **BOT PERMISSIONS**: `Send Messages`, `Embed Links`, `Read Message History`, `Use Slash Commands` 체크
 
    <p align="center">
-     <img src="docs/discord-bot-permissions.png" alt="Discord Bot Permissions" width="500">
+     <img src="discord-bot-permissions.png" alt="Discord Bot Permissions" width="500">
    </p>
 
 3. 생성된 URL을 복사하여 브라우저에 붙여넣기
@@ -181,7 +181,7 @@ npm run build
 `win-start.bat`을 실행하거나 **바탕화면 바로가기**를 더블클릭하세요. 트레이 앱이 실행되고, `.env`가 없으면 자동으로 **설정** 창이 열립니다.
 
 <p align="center">
-  <img src="docs/windows-settings.png" alt="Windows 설정 다이얼로그" width="450">
+  <img src="windows-settings.png" alt="Windows 설정 다이얼로그" width="450">
 </p>
 
 항목을 채워주세요:

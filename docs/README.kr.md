@@ -119,10 +119,13 @@ claudecode-discord/
 │   │   └── guard.ts        # 인증, rate limit
 │   └── utils/
 │       └── config.ts       # 환경변수 검증 (zod)
-├── SETUP.md / SETUP.kr.md              # macOS/Linux 셋업 가이드
-├── SETUP-WINDOWS.md / SETUP-WINDOWS.kr.md  # Windows 셋업 가이드
-├── docs/                   # 문서 부속자료 & 스크린샷
-│   ├── TESTING.md / TESTING.kr.md          # 테스트 가이드
+├── SETUP.md                # macOS/Linux 셋업 가이드 (EN)
+├── docs/                   # 번역, 부속 문서 & 스크린샷
+│   ├── README.kr.md        # 한국어 README
+│   ├── SETUP.kr.md         # macOS/Linux 셋업 가이드 (KR)
+│   ├── SETUP-WINDOWS.md    # Windows 셋업 가이드 (EN)
+│   ├── SETUP-WINDOWS.kr.md # Windows 셋업 가이드 (KR)
+│   ├── TESTING.md / TESTING.kr.md  # 테스트 가이드
 │   └── *.png               # 스크린샷
 ├── package.json
 └── tsconfig.json
@@ -252,7 +255,7 @@ Linux에서 봇을 systemd 서비스로 실행하고, 시스템 트레이에서 
 Windows에서는 `install.bat`으로 모든 것이 설치되고 **바탕화면 바로가기**가 생성됩니다. 더블클릭으로 실행하세요.
 
 <p align="center">
-  <img src="docs/windows-tray.png" alt="Windows 컨트롤 패널" width="400">
+  <img src="windows-tray.png" alt="Windows 컨트롤 패널" width="400">
 </p>
 
 ```batch
@@ -265,7 +268,7 @@ win-start.bat --fg     &:: 포그라운드 모드 (디버깅용)
 봇은 **시스템 트레이 아이콘**과 함께 백그라운드에서 실행됩니다:
 
 <p align="center">
-  <img src="docs/windows-tray-icon.png" alt="Windows 시스템 트레이 아이콘" width="300">
+  <img src="windows-tray-icon.png" alt="Windows 시스템 트레이 아이콘" width="300">
 </p>
 
 - **컨트롤 패널 GUI**: 트레이 아이콘 왼쪽 클릭으로 시작/중지/재시작, 설정, 로그, 자동 업데이트
@@ -274,7 +277,7 @@ win-start.bat --fg     &:: 포그라운드 모드 (디버깅용)
 - GUI 설정 다이얼로그 — `.env` 직접 편집 불필요:
 
 <p align="center">
-  <img src="docs/windows-settings.png" alt="Windows 설정 다이얼로그" width="400">
+  <img src="windows-settings.png" alt="Windows 설정 다이얼로그" width="400">
 </p>
 - 원클릭 자동 업데이트: 코드 다운로드, 재빌드, 트레이 앱 재컴파일
 - 로그온 시 자동 시작 (Windows 레지스트리)

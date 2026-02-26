@@ -160,6 +160,7 @@ is_env_configured() {
 
 if is_env_configured; then
     systemctl --user enable "$SERVICE_NAME" 2>/dev/null
+    loginctl enable-linger 2>/dev/null
     systemctl --user start "$SERVICE_NAME"
     echo "🟢 Bot started in background"
 else

@@ -396,6 +396,8 @@ def toggle_autostart(icon, item):
         subprocess.run(["systemctl", "--user", "disable", SERVICE_NAME], capture_output=True)
     else:
         subprocess.run(["systemctl", "--user", "enable", SERVICE_NAME], capture_output=True)
+        # Enable lingering so user services start at boot (before login)
+        subprocess.run(["loginctl", "enable-linger"], capture_output=True)
     icon.menu = create_menu()
 
 

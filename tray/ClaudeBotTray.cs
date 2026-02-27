@@ -26,6 +26,7 @@ class ClaudeBotTray : Form
     private string currentVersion = "unknown";
     private bool updateAvailable = false;
     private bool lastPanelRunning = false;
+    private bool botStarting = false;
 
     // Language support
     private string langPrefFile;
@@ -408,6 +409,8 @@ class ClaudeBotTray : Form
 
     private void StartBot(object sender, EventArgs e)
     {
+        botStarting = true;
+        RebuildControlPanel();
         KillBot();
         // Copy node.exe as ClaudeBot.exe so it shows as "ClaudeBot" in Task Manager
         string claudeBotExe = Path.Combine(botDir, "ClaudeBot.exe");
@@ -442,10 +445,11 @@ class ClaudeBotTray : Form
             if (nowRunning)
             {
                 waitTimer.Stop();
+                botStarting = false;
                 try { File.Delete(vbs); } catch { }
                 UpdateStatus();
                 BuildMenu();
-                if (nowRunning != lastPanelRunning) RebuildControlPanel();
+                RebuildControlPanel();
                 trayIcon.BalloonTipTitle = L("Claude Discord Bot Started", "Claude Discord Bot 시작됨");
                 trayIcon.BalloonTipText = L("Bot is running. Click tray icon to manage.",
                                              "봇이 실행 중입니다. 트레이 아이콘을 클릭하여 관리하세요.");
@@ -456,10 +460,11 @@ class ClaudeBotTray : Form
             else if (waitCount > 10)
             {
                 waitTimer.Stop();
+                botStarting = false;
                 try { File.Delete(vbs); } catch { }
                 UpdateStatus();
                 BuildMenu();
-                if (nowRunning != lastPanelRunning) RebuildControlPanel();
+                RebuildControlPanel();
             }
         };
         waitTimer.Start();
@@ -964,8 +969,8 @@ class ClaudeBotTray : Form
         y += 15;
 
         // Status indicator
-        string statusText = !hasEnv ? L("Setup Required", "설정 필요") : (running ? L("Running", "실행 중") : L("Stopped", "중지됨"));
-        Color statusColor = !hasEnv ? Color.Orange : (running ? Color.LimeGreen : Color.Red);
+        string statusText = !hasEnv ? L("Setup Required", "설정 필요") : botStarting ? L("Starting...", "시작 중...") : (running ? L("Running", "실행 중") : L("Stopped", "중지됨"));
+        Color statusColor = !hasEnv ? Color.Orange : botStarting ? Color.Yellow : (running ? Color.LimeGreen : Color.Red);
         var statusPanel = new Panel() { Left = 25, Top = y, Width = btnWidth, Height = 50, BackColor = BgPanel };
         statusPanel.Region = new Region(RoundedRect(new Rectangle(0, 0, btnWidth, 50), 8));
         var statusDot = new Label() { Left = 14, Top = 14, Width = 24, Height = 24, Text = "", BackColor = Color.Transparent };
@@ -996,6 +1001,12 @@ class ClaudeBotTray : Form
                 var restartBtn = MakeDarkButton(L("Restart Bot", "봇 재시작"), 25 + halfBtnWidth + 10, y, halfBtnWidth, 42, BtnRestart, Color.FromArgb(220, 180, 90));
                 restartBtn.Click += (s, ev) => { RestartBot(null, null); };
                 controlPanel.Controls.Add(restartBtn);
+            }
+            else if (botStarting)
+            {
+                var startingBtn = MakeDarkButton(L("Starting...", "시작 중..."), 25, y, btnWidth, 42, BgPanel, FgDimGray);
+                startingBtn.Enabled = false;
+                controlPanel.Controls.Add(startingBtn);
             }
             else
             {

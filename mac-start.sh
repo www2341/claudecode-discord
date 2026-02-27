@@ -117,9 +117,11 @@ if [ -f "$SCRIPT_DIR/menubar/ClaudeBotMenu.swift" ]; then
             exit 0
         fi
         if ! xcrun --find swiftc &>/dev/null; then
-            echo "⚠ Xcode license not accepted. Please run:"
-            echo "  sudo xcodebuild -license accept"
-            exit 1
+            echo "⚠ Xcode license not accepted. Accepting..."
+            sudo xcodebuild -license accept 2>/dev/null || {
+                echo "  Failed. Please run manually: sudo xcodebuild -license accept"
+                exit 1
+            }
         fi
         echo "🔨 Building menu bar app..."
         swiftc -o "$MENUBAR" "$SCRIPT_DIR/menubar/ClaudeBotMenu.swift" -framework Cocoa

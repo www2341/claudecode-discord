@@ -16,9 +16,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     xcode-select --install 2>/dev/null || true
     echo "  ⚠ A dialog should appear. Complete the installation, then re-run this script."
     exit 0
-  else
-    echo "  ✅ OK"
   fi
+  # Accept Xcode license if needed (required for swiftc)
+  if ! xcrun --find swiftc &>/dev/null; then
+    echo "  Accepting Xcode license..."
+    sudo xcodebuild -license accept 2>/dev/null || true
+  fi
+  echo "  ✅ OK"
   echo ""
 fi
 

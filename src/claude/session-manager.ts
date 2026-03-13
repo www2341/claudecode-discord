@@ -527,6 +527,29 @@ class SessionManager {
   hasQueue(channelId: string): boolean {
     return this.pendingQueuePrompts.has(channelId);
   }
+
+  getQueue(channelId: string): { channel: TextChannel; prompt: string }[] {
+    return this.messageQueue.get(channelId) ?? [];
+  }
+
+  clearQueue(channelId: string): number {
+    const queue = this.messageQueue.get(channelId) ?? [];
+    const count = queue.length;
+    this.messageQueue.delete(channelId);
+    this.pendingQueuePrompts.delete(channelId);
+    return count;
+  }
+
+  removeFromQueue(channelId: string, index: number): string | null {
+    const queue = this.messageQueue.get(channelId);
+    if (!queue || index < 0 || index >= queue.length) return null;
+    const [removed] = queue.splice(index, 1);
+    if (queue.length === 0) {
+      this.messageQueue.delete(channelId);
+      this.pendingQueuePrompts.delete(channelId);
+    }
+    return removed.prompt;
+  }
 }
 
 export const sessionManager = new SessionManager();
